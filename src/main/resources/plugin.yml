@@ -1,0 +1,5 @@
+name: Hyperion
+version: '${project.version}'
+main: me.vermeil.hyperion.Hyperion
+api-version: '1.17'
+load: STARTUP
