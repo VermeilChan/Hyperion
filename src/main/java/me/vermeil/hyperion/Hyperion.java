@@ -11,12 +11,17 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 
 public class Hyperion extends JavaPlugin implements Listener {
     private static final Random random = new Random();
+    private final Map<UUID, Long> healingCooldowns = new HashMap<>();
 
     @Override
     public void onEnable() {
@@ -54,7 +59,8 @@ public class Hyperion extends JavaPlugin implements Listener {
         player.teleport(teleportDestination);
 
         World world = player.getWorld();
-        world.playSound(player.getLocation(), Sound.ENTITY_ZOMBIE_VILLAGER_CURE, 1.0f, 1.0f);
+        world.playSound(player.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 1.0f);
+        world.spawnParticle(Particle.EXPLOSION_LARGE, player.getLocation(), 10);
 
         double range = 5.0;
         int entitiesDamaged = 0;
@@ -71,12 +77,29 @@ public class Hyperion extends JavaPlugin implements Listener {
             }
         }
 
+        player.sendMessage(ChatColor.GRAY + "Your Implosion hit " + ChatColor.RED + entitiesDamaged + ChatColor.GRAY + " enemies for " + ChatColor.RED + String.format("%.1f", totalDamage) + ChatColor.GRAY + " damage.");
+
+        int healingCooldownSeconds = 5;
+        if (healingCooldowns.containsKey(player.getUniqueId())) {
+            long cooldownTimeLeft = ((healingCooldowns.get(player.getUniqueId()) / 1000) + healingCooldownSeconds) - (System.currentTimeMillis() / 1000);
+            if (cooldownTimeLeft > 0) {
+                return;
+            }
+        }
+
         player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 200, 5));
         player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 200, 20));
         player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 200, 20));
 
+        healingCooldowns.put(player.getUniqueId(), System.currentTimeMillis());
+        world.playSound(player.getLocation(), Sound.ENTITY_ZOMBIE_VILLAGER_CURE, 1.0f, 1.0f);
         world.spawnParticle(Particle.EXPLOSION_LARGE, player.getLocation(), 10);
-
-        player.sendMessage(ChatColor.GRAY + "Your Implosion hit " + ChatColor.RED + entitiesDamaged + ChatColor.GRAY + " enemies for " + ChatColor.RED + String.format("%.1f", totalDamage) + ChatColor.GRAY + " damage.");
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                healingCooldowns.remove(player.getUniqueId());
+                player.sendMessage(ChatColor.GREEN + "Healing ability is now available!");
+            }
+        }.runTaskLater(this, healingCooldownSeconds * 20);
     }
 }
