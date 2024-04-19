@@ -60,7 +60,7 @@ public class Hyperion extends JavaPlugin implements Listener {
 
         World world = player.getWorld();
         world.playSound(player.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 1.0f);
-        world.spawnParticle(Particle.EXPLOSION_LARGE, player.getLocation(), 10);
+        world.spawnParticle(Particle.EXPLOSION_LARGE, player.getLocation(), 100);
 
         double range = 5.0;
         int entitiesDamaged = 0;
@@ -70,7 +70,7 @@ public class Hyperion extends JavaPlugin implements Listener {
                 Location entityLocation = entity.getLocation();
                 entityLocation.setDirection(player.getLocation().getDirection());
                 entity.teleport(entityLocation);
-                double damage = random.nextInt(71) + 5;
+                double damage = random.nextInt(1000) + 1;
                 ((LivingEntity) entity).damage(damage);
                 entitiesDamaged++;
                 totalDamage += damage;
@@ -87,13 +87,14 @@ public class Hyperion extends JavaPlugin implements Listener {
             }
         }
 
-        player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 200, 5));
         player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 200, 20));
-        player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 200, 20));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 100, 20));
 
         healingCooldowns.put(player.getUniqueId(), System.currentTimeMillis());
+
         world.playSound(player.getLocation(), Sound.ENTITY_ZOMBIE_VILLAGER_CURE, 1.0f, 1.0f);
         world.spawnParticle(Particle.EXPLOSION_LARGE, player.getLocation(), 10);
+
         new BukkitRunnable() {
             @Override
             public void run() {
