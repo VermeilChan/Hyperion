@@ -60,7 +60,7 @@ public class Hyperion extends JavaPlugin implements Listener {
 
         World world = player.getWorld();
         world.playSound(player.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 1.0f);
-        world.spawnParticle(Particle.EXPLOSION_LARGE, player.getLocation(), 100);
+        world.spawnParticle(Particle.EXPLOSION, player.getLocation(), 5);
 
         double range = 5.0;
         int entitiesDamaged = 0;
@@ -70,14 +70,14 @@ public class Hyperion extends JavaPlugin implements Listener {
                 Location entityLocation = entity.getLocation();
                 entityLocation.setDirection(player.getLocation().getDirection());
                 entity.teleport(entityLocation);
-                double damage = random.nextInt(1000) + 1;
+                double damage = 1 + (1000 - 1) * random.nextDouble();
                 ((LivingEntity) entity).damage(damage);
                 entitiesDamaged++;
                 totalDamage += damage;
             }
         }
 
-        player.sendMessage(ChatColor.GRAY + "Your Implosion hit " + ChatColor.RED + entitiesDamaged + ChatColor.GRAY + " enemies for " + ChatColor.RED + String.format("%.1f", totalDamage) + ChatColor.GRAY + " damage.");
+        player.sendMessage(ChatColor.GRAY + "Your Implosion hit " + ChatColor.RED + entitiesDamaged + ChatColor.GRAY + " enemies for " + ChatColor.RED + String.format("%.2f", totalDamage) + ChatColor.GRAY + " damage.");
 
         int healingCooldownSeconds = 5;
         if (healingCooldowns.containsKey(player.getUniqueId())) {
@@ -93,7 +93,7 @@ public class Hyperion extends JavaPlugin implements Listener {
         healingCooldowns.put(player.getUniqueId(), System.currentTimeMillis());
 
         world.playSound(player.getLocation(), Sound.ENTITY_ZOMBIE_VILLAGER_CURE, 1.0f, 1.0f);
-        world.spawnParticle(Particle.EXPLOSION_LARGE, player.getLocation(), 10);
+        world.spawnParticle(Particle.EXPLOSION, player.getLocation(), 5);
 
         new BukkitRunnable() {
             @Override
