@@ -10,12 +10,12 @@ Hyperion is a Spigot plugin inspired by the [Hyperion](https://wiki.hypixel.net/
 
 ## Usage
 1. **Installation:**
-- Download the latest stable release from [here](https://github.com/VermeilChan/Hyperion/releases/latest). 1.17+
-- Place the JAR file in the plugins folder in your server.
+   - Download the latest stable release from [here](https://github.com/VermeilChan/Hyperion/releases/latest). 1.17+
+   - Place the JAR file in the plugins folder in your server.
 
 2. **In-Game:**
-- Get an iron sword.
-- SPAM RIGHT CLICK :)
+   - Get an iron sword.
+   - SPAM RIGHT CLICK :)
 
 ## Permissions
 
