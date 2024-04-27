@@ -22,4 +22,7 @@ Hyperion is a Spigot plugin inspired by the [Hyperion](https://wiki.hypixel.net/
 - There are no permissions. All players can use the Hyperion weapon and its abilities.
 
 ## License
-- This mod is licensed under [GNU General Public License v3.0](LICENSE).
+- This plugin is licensed under [GNU General Public License v3.0](LICENSE).
+
+## Credits
+Icon: [Furfsky](https://furfsky.net/)
