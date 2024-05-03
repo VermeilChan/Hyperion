@@ -23,4 +23,4 @@ Hyperion is a Spigot plugin inspired by the [Hyperion](https://wiki.hypixel.net/
 - This plugin is licensed under the [GNU General Public License v3.0](LICENSE).
 
 ## Credits
-- Icon design by: [Furfsky](https://furfsky.net/)
+- Icon by: [Furfsky](https://furfsky.net/)
