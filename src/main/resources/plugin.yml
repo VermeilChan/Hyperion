@@ -3,3 +3,13 @@ version: '${project.version}'
 main: me.vermeil.hyperion.Hyperion
 api-version: '1.17'
 load: STARTUP
+authors: [VermeilChan]
+description: Hyperion is a Spigot plugin inspired by the Hyperion abilities from the Hypixel Skyblock.
+website: https://github.com/VermeilChan/Hyperion
+commands:
+  givehyperion:
+    usage: /givehyperion
+    permission: hyperion.give
+permissions:
+  hyperion.give:
+    default: op
