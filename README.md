@@ -1,7 +1,7 @@
 # Hyperion - Hypixel Skyblock
 
 ## Description
-Hyperion is a Spigot plugin inspired by the [Hyperion](https://wiki.hypixel.net/Hyperion) sword and its abilities from the [Hypixel Skyblock](https://wiki.hypixel.net/Main_Page).
+Hyperion is a Spigot plugin inspired by the [Hyperion](https://wiki.hypixel.net/Hyperion) sword and its abilities from [Hypixel Skyblock](https://wiki.hypixel.net/Main_Page).
 
 ## Features
 - **Wither Impact**: Teleport 10 blocks ahead of you. Then implode, dealing 30,000-50,000 damage to nearby enemies. Also applies the wither shield scroll ability, reducing damage taken and granting an absorption shield for 5 seconds.
