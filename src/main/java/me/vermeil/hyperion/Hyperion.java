@@ -10,7 +10,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -96,6 +98,10 @@ public class Hyperion extends JavaPlugin implements Listener, CommandExecutor {
         );
 
         meta.setLore(lore);
+        meta.addEnchant(Enchantment.UNBREAKING, 100 , true);
+        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        meta.setUnbreakable(true);
+        meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
         hyperionSword.setItemMeta(meta);
 
         return hyperionSword;
@@ -121,7 +127,6 @@ public class Hyperion extends JavaPlugin implements Listener, CommandExecutor {
         if (canUseHealing(player)) {
             applyHealingEffects(player);
             setHealingCooldown(player);
-            scheduleHealingCooldownReset(player);
         }
     }
 
@@ -182,7 +187,7 @@ public class Hyperion extends JavaPlugin implements Listener, CommandExecutor {
     }
 
     private double RandomDamage() {
-        return (double) 30000 + (Math.random() * ((double) 50000 - (double) 30000));
+        return 30000 + (Math.random() * (50000 - 30000));
     }
 
     private void notifyPlayerOfDamage(Player player, int entitiesDamaged) {
@@ -194,19 +199,14 @@ public class Hyperion extends JavaPlugin implements Listener, CommandExecutor {
     }
 
     private boolean canUseHealing(Player player) {
-        if (!healingCooldowns.containsKey(player.getUniqueId())) {
-            return true;
-        }
-
-        long lastUseTime = healingCooldowns.get(player.getUniqueId());
-        long cooldownTimeLeft = (lastUseTime / 1000 + 5) - (System.currentTimeMillis() / 1000);
-        return cooldownTimeLeft <= 0;
+        Long cooldownEnd = healingCooldowns.get(player.getUniqueId());
+        return cooldownEnd == null || System.currentTimeMillis() >= cooldownEnd;
     }
 
     private void applyHealingEffects(Player player) {
-        player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, PotionEffect.INFINITE_DURATION, 20));
-        player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 100, 10));
-        player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 100, 5));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, PotionEffect.INFINITE_DURATION, 20, true));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 100, 10, true));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 100, 5, true));
 
         World world = player.getWorld();
         world.playSound(player.getLocation(), Sound.ENTITY_ZOMBIE_VILLAGER_CURE, 1.0f, 1.0f);
@@ -214,15 +214,13 @@ public class Hyperion extends JavaPlugin implements Listener, CommandExecutor {
     }
 
     private void setHealingCooldown(Player player) {
-        healingCooldowns.put(player.getUniqueId(), System.currentTimeMillis());
-    }
+        healingCooldowns.put(player.getUniqueId(), System.currentTimeMillis() + 5000);
 
-    private void scheduleHealingCooldownReset(Player player) {
         new BukkitRunnable() {
             @Override
             public void run() {
                 healingCooldowns.remove(player.getUniqueId());
             }
-        }.runTaskLater(this, 5 * 20);
+        }.runTaskLater(this, 5000 / 50);
     }
 }
