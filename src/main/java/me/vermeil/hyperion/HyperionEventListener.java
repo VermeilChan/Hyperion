@@ -22,7 +22,7 @@ public class HyperionEventListener implements Listener {
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
-        if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) {
+        if (!isRightClick(event.getAction())) {
             return;
         }
 
@@ -43,36 +43,42 @@ public class HyperionEventListener implements Listener {
         }
     }
 
+    private boolean isRightClick(Action action) {
+        return action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK;
+    }
+
     private void teleportPlayer(Player player) {
         Vector direction = player.getLocation().getDirection().normalize();
         Location teleportDestination = findTeleportDestination(player, direction);
         player.teleport(teleportDestination);
 
         World world = player.getWorld();
-        world.playSound(player.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 1.0f);
-        world.spawnParticle(Particle.EXPLOSION, player.getLocation(), 5);
+        Location playerLocation = player.getLocation();
+        world.playSound(playerLocation, Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 1.0f);
+        world.spawnParticle(Particle.EXPLOSION, playerLocation, 5);
     }
 
     private Location findTeleportDestination(Player player, Vector direction) {
-        Location teleportDestination = player.getLocation();
-        for (double i = 0; i < 10; i += 0.5) {
-            Location loc = player.getLocation().add(direction.clone().multiply(i));
-            if (!loc.getBlock().isPassable()) {
+        Location startLocation = player.getLocation();
+        Location teleportDestination = startLocation.clone();
+        for (double i = 0; i < 10.0; i += 0.5) {
+            Location currentLocation = startLocation.clone().add(direction.clone().multiply(i));
+            if (!currentLocation.getBlock().isPassable()) {
                 break;
             }
-            teleportDestination = loc;
+            teleportDestination = currentLocation;
         }
         return teleportDestination;
     }
 
     private int damageNearbyEntities(Player player) {
+        double damage = RandomDamage();
         double range = 5.0;
         int entitiesDamaged = 0;
-        double hyperionDamage = RandomDamage();
 
         for (Entity entity : player.getNearbyEntities(range, range, range)) {
             if (entity instanceof LivingEntity && !(entity instanceof Player)) {
-                ((LivingEntity) entity).damage(hyperionDamage);
+                ((LivingEntity) entity).damage(damage);
                 entitiesDamaged++;
             }
         }
@@ -98,13 +104,14 @@ public class HyperionEventListener implements Listener {
     }
 
     private void applyHealingEffects(Player player) {
-        player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, PotionEffect.INFINITE_DURATION, 20, true));
-        player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 100, 10, true));
-        player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 100, 5, true));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, PotionEffect.INFINITE_DURATION, 20));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 100, 10));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 100, 1));
 
         World world = player.getWorld();
-        world.playSound(player.getLocation(), Sound.ENTITY_ZOMBIE_VILLAGER_CURE, 1.0f, 1.0f);
-        world.spawnParticle(Particle.EXPLOSION, player.getLocation(), 1);
+        Location playerLocation = player.getLocation();
+        world.playSound(playerLocation, Sound.ENTITY_ZOMBIE_VILLAGER_CURE, 1.0f, 1.0f);
+        world.spawnParticle(Particle.EXPLOSION, playerLocation, 1);
     }
 
     private void setHealingCooldown(Player player) {
