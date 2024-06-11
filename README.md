@@ -8,16 +8,20 @@ Hyperion is a Spigot plugin inspired by the [Hyperion](https://wiki.hypixel.net/
 
 ## Usage
 1. **Installation**:
-   - Download the latest stable release from [here](https://github.com/VermeilChan/Hyperion/releases/latest). Compatible with Minecraft 1.17+.
+   - Download the latest stable release from [here](https://github.com/VermeilChan/Hyperion/releases/latest).
    - Place the JAR file in the `plugins` folder on your server.
    - Restart or reload your server.
 
 2. **In-Game Usage**:
-   - Obtain the Hyperion by using the `/givehyperion` command (requires server OP).
+   - Anyone can give themselves the Hyperion by using the command /givehyperion.
    - Right-click with the Hyperion to trigger the Wither Impact Ability.
 
+## Compatibility
+- Supports Spigot 1.17 to 1.20.4 (some features may not work).
+- Fully compatible with Spigot 1.20.5+
+
 ## Permissions
-- There are no specific permissions for using the Hyperion sword and its abilities, but only server OPs can use the `/givehyperion` command to obtain it.
+- There are no permissions. All players can get and use the Hyperion.
 
 ## License
 - This plugin is licensed under the [GNU General Public License v3.0](LICENSE).
