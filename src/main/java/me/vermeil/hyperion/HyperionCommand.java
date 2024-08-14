@@ -16,10 +16,6 @@ public class HyperionCommand implements CommandExecutor {
 
         Player player = (Player) sender;
 
-        if (!player.isOp()) {
-            return true;
-        }
-
         ItemStack hyperionSword = HyperionBuilder.giveHyperion();
         player.getInventory().addItem(hyperionSword);
         player.sendMessage(ColorUtils.color("&aYou have received the Hyperion"));
