@@ -16,10 +16,6 @@ Hyperion is a Spigot plugin inspired by the [Hyperion](https://wiki.hypixel.net/
    - Anyone can give themselves the Hyperion by using the command /givehyperion.
    - Right-click with the Hyperion to trigger the Wither Impact Ability.
 
-## Compatibility
-- Supports Spigot 1.17 to 1.20.4 (some features may not work).
-- Fully compatible with Spigot 1.20.5+
-
 ## Permissions
 - There are no permissions. All players can get and use the Hyperion.
 
