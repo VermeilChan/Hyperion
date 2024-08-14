@@ -19,19 +19,21 @@ import java.util.*;
 
 public class HyperionEventListener implements Listener {
     private final Map<UUID, Long> healingCooldowns = new HashMap<>();
+    private static final double TELEPORT_MAX_DISTANCE = 10.0;
+    private static final double TELEPORT_STEP = 0.5;
+    private static final double DAMAGE_MIN = 30000;
+    private static final double DAMAGE_MAX = 50000;
+    private static final double DAMAGE_RANGE = 5.0;
+    private static final long HEALING_COOLDOWN = 5000L;
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
-        if (!isRightClick(event.getAction())) {
-            return;
-        }
+        if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 
         Player player = event.getPlayer();
         ItemStack item = player.getInventory().getItemInMainHand();
 
-        if (!HyperionBuilder.isHyperion(item)) {
-            return;
-        }
+        if (!HyperionBuilder.isHyperion(item)) return;
 
         teleportPlayer(player);
         int entitiesDamaged = damageNearbyEntities(player);
@@ -41,10 +43,6 @@ public class HyperionEventListener implements Listener {
             applyHealingEffects(player);
             setHealingCooldown(player);
         }
-    }
-
-    private boolean isRightClick(Action action) {
-        return action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK;
     }
 
     private void teleportPlayer(Player player) {
@@ -59,40 +57,30 @@ public class HyperionEventListener implements Listener {
     }
 
     private Location findTeleportDestination(Player player, Vector direction) {
-        Location startLocation = player.getLocation();
-        Location teleportDestination = startLocation.clone();
-        for (double i = 0; i < 10.0; i += 0.5) {
-            Location currentLocation = startLocation.clone().add(direction.clone().multiply(i));
-            if (!currentLocation.getBlock().isPassable()) {
-                break;
-            }
-            teleportDestination = currentLocation;
+        Location location = player.getLocation();
+        for (double i = 0; i < TELEPORT_MAX_DISTANCE; i += TELEPORT_STEP) {
+            Location testLocation = location.clone().add(direction.clone().multiply(i));
+            if (!testLocation.getBlock().isPassable()) return location.clone().add(direction.clone().multiply(i - TELEPORT_STEP));
         }
-        return teleportDestination;
+        return location.clone().add(direction.clone().multiply(TELEPORT_MAX_DISTANCE));
     }
 
     private int damageNearbyEntities(Player player) {
-        double damage = RandomDamage();
-        double range = 5.0;
+        double damage = DAMAGE_MIN + (Math.random() * (DAMAGE_MAX - DAMAGE_MIN));
         int entitiesDamaged = 0;
 
-        for (Entity entity : player.getNearbyEntities(range, range, range)) {
+        for (Entity entity : player.getNearbyEntities(DAMAGE_RANGE, DAMAGE_RANGE, DAMAGE_RANGE)) {
             if (entity instanceof LivingEntity && !(entity instanceof Player)) {
                 ((LivingEntity) entity).damage(damage);
                 entitiesDamaged++;
             }
         }
-
         return entitiesDamaged;
-    }
-
-    private double RandomDamage() {
-        return 30000 + (Math.random() * (50000 - 30000));
     }
 
     private void notifyPlayerOfDamage(Player player, int entitiesDamaged) {
         if (entitiesDamaged > 0) {
-            double totalDamage = entitiesDamaged * RandomDamage();
+            double totalDamage = entitiesDamaged * (DAMAGE_MIN + (Math.random() * (DAMAGE_MAX - DAMAGE_MIN)));
             String message = ChatColor.GRAY + "Your Implosion hit " + ChatColor.RED + entitiesDamaged + ChatColor.GRAY + " enemies for " + ChatColor.RED + String.format("%.2f", totalDamage) + ChatColor.GRAY + " damage.";
             player.sendMessage(message);
         }
@@ -115,13 +103,12 @@ public class HyperionEventListener implements Listener {
     }
 
     private void setHealingCooldown(Player player) {
-        healingCooldowns.put(player.getUniqueId(), System.currentTimeMillis() + 5000);
-
+        healingCooldowns.put(player.getUniqueId(), System.currentTimeMillis() + HEALING_COOLDOWN);
         new BukkitRunnable() {
             @Override
             public void run() {
                 healingCooldowns.remove(player.getUniqueId());
             }
-        }.runTaskLater(JavaPlugin.getPlugin(Hyperion.class), 5000 / 50);
+        }.runTaskLater(JavaPlugin.getPlugin(Hyperion.class), HEALING_COOLDOWN / 50);
     }
 }
